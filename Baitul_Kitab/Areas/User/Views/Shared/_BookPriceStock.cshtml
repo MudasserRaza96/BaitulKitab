@@ -1,0 +1,25 @@
+@model UserBookCardDTO
+@* Shared price + availability block used by the book card and the details page *@
+<div class="book-price mb-2">
+    @if (Model.HasDiscount)
+    {
+        <span class="h5 text-success font-weight-bold mb-0">@Model.EffectivePrice.ToString("N2")</span>
+        <del class="text-muted ml-2">@Model.Price.ToString("N2")</del>
+    }
+    else
+    {
+        <span class="h5 font-weight-bold mb-0">@Model.Price.ToString("N2")</span>
+    }
+</div>
+@if (!Model.InStock)
+{
+    <span class="badge badge-danger">Out of Stock</span>
+}
+else if (Model.Quantity <= 5)
+{
+    <span class="badge badge-warning">Only @Model.Quantity left</span>
+}
+else
+{
+    <span class="badge badge-success">In Stock</span>
+}

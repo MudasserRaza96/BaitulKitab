@@ -1,0 +1,33 @@
+@model IEnumerable<UserBookCardDTO>
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="content pt-3">
+    <div class="container-fluid">
+        @await Component.InvokeAsync("AdPlacement", new { placement = AdPlacements.TopBanner })
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h4 mb-0">Featured &amp; Latest Books</h1>
+            <a asp-area="User" asp-controller="Store" asp-action="Books" class="btn btn-primary btn-sm">Browse all books</a>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">No books are available right now.</div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var book in Model)
+                {
+                    <div class="col-6 col-md-4 col-xl-3 mb-3">
+                        <partial name="_BookCard" model="book" />
+                    </div>
+                }
+            </div>
+        }
+
+        @await Component.InvokeAsync("AdPlacement", new { placement = AdPlacements.Footer })
+    </div>
+</section>

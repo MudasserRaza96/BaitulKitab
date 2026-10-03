@@ -1,0 +1,461 @@
+@{
+    ViewData["Title"] = "Books";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card" id="BookFormDiv" style="display:none;">
+    <div class="card-header">
+        <h3 class="card-title" id="BookFormTitle">Add Book</h3>
+    </div>
+    <div class="card-body">
+        <form id="BookForm" enctype="multipart/form-data">
+            <div class="form-group row align-items-center mb-2">
+                <label for="Title" class="col-sm-2 col-form-label text-end">Title <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                    <input id="Title" name="Title" maxlength="200" class="form-control" placeholder="Book Title" type="text" />
+                </div>
+                <label for="ISBN" class="col-sm-2 col-form-label text-end">ISBN</label>
+                <div class="col-sm-4">
+                    <input id="ISBN" name="ISBN" maxlength="20" class="form-control" placeholder="ISBN" type="text" />
+                </div>
+            </div>
+            <div class="form-group row align-items-center mb-2">
+                <label for="CategoryId" class="col-sm-2 col-form-label text-end">Category <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                    <select id="CategoryId" name="CategoryId" class="form-control select2">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                </div>
+                <label for="AuthorId" class="col-sm-2 col-form-label text-end">Author</label>
+                <div class="col-sm-4">
+                    <select id="AuthorId" name="AuthorId" class="form-control select2">
+                        <option value="">-- Select Author --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row align-items-center mb-2">
+                <label for="LanguageId" class="col-sm-2 col-form-label text-end">Language</label>
+                <div class="col-sm-4">
+                    <select id="LanguageId" name="LanguageId" class="form-control select2">
+                        <option value="">-- Select Language --</option>
+                    </select>
+                </div>
+                <label for="Publisher" class="col-sm-2 col-form-label text-end">Publisher</label>
+                <div class="col-sm-4">
+                    <input id="Publisher" name="Publisher" maxlength="200" class="form-control" placeholder="Publisher" type="text" />
+                </div>
+            </div>
+            <div class="form-group row align-items-center mb-2">
+                <label for="Price" class="col-sm-2 col-form-label text-end">Price <span class="text-danger">*</span></label>
+                <div class="col-sm-4">
+                    <input id="Price" name="Price" class="form-control" placeholder="0.00" type="number" step="0.01" min="0" value="0" />
+                </div>
+                <label for="DiscountPrice" class="col-sm-2 col-form-label text-end">Discount Price</label>
+                <div class="col-sm-4">
+                    <input id="DiscountPrice" name="DiscountPrice" class="form-control" placeholder="0.00" type="number" step="0.01" min="0" />
+                </div>
+            </div>
+            <div class="form-group row align-items-center mb-2">
+                <label for="Quantity" class="col-sm-2 col-form-label text-end">Quantity</label>
+                <div class="col-sm-4">
+                    <input id="Quantity" name="Quantity" class="form-control" placeholder="0" type="number" min="0" />
+                </div>
+                <label for="Pages" class="col-sm-2 col-form-label text-end">Pages</label>
+                <div class="col-sm-4">
+                    <input id="Pages" name="Pages" class="form-control" placeholder="0" type="number" min="0" />
+                </div>
+            </div>
+            <div class="form-group row align-items-center mb-2">
+                <label for="PublishDate" class="col-sm-2 col-form-label text-end">Publish Date</label>
+                <div class="col-sm-4">
+                    <input id="PublishDate" name="PublishDate" class="form-control" type="date" />
+                </div>
+                <label for="BookCoverImageFile" class="col-sm-2 col-form-label text-end">Cover Image</label>
+                <div class="col-sm-4">
+                    <input id="BookCoverImageFile" name="BookCoverImageFile" class="form-control" type="file" accept="image/*" />
+                    <div id="imagePreview" class="mt-2" style="display:none;">
+                        <img id="previewImg" src="#" alt="Preview" style="max-height:100px;max-width:150px;border:1px solid #ccc;" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row align-items-center mb-2">
+                <label for="BookPdfFile" class="col-sm-2 col-form-label text-end">Book PDF</label>
+                <div class="col-sm-4">
+                    <input id="BookPdfFile" name="BookPdfFile" class="form-control" type="file" accept="application/pdf,.pdf" />
+                    <div id="pdfCurrent" class="mt-2" style="display:none;">
+                        <a id="currentPdfLink" href="#" target="_blank" class="btn btn-sm btn-outline-info">
+                            <i class="fas fa-file-pdf text-danger mr-1"></i> View Current PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row align-items-center mb-2">
+                <label for="Description" class="col-sm-2 col-form-label text-end">Description</label>
+                <div class="col-sm-10">
+                    <textarea id="Description" name="Description" class="form-control" placeholder="Description" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="form-group row align-items-center mb-2">
+                <label for="IsFeatured" class="col-sm-2 col-form-label text-end">Featured</label>
+                <div class="col-sm-2">
+                    <input id="IsFeatured" name="IsFeatured" class="form-check-input ms-2" type="checkbox" />
+                </div>
+                <label for="IsActive" class="col-sm-2 col-form-label text-end">Active</label>
+                <div class="col-sm-2">
+                    <input id="IsActive" name="IsActive" class="form-check-input ms-2" type="checkbox" checked />
+                </div>
+            </div>
+            <input type="hidden" id="BookId" name="Id" />
+            <div class="form-group row">
+                <div class="col-sm-12 d-flex justify-content-end">
+                    <button type="button" id="SubmitId" class="btn btn-primary mr-2">Submit</button>
+                    <button type="button" id="CancelId" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-4">
+                <h3 class="mb-0">Books</h3>
+            </div>
+            <div class="col-12 col-md-8 d-flex justify-content-md-end justify-content-start mt-2 mt-md-0">
+                <div class="mr-3">
+                    <select id="FilterCategory" class="form-control form-control-sm" style="min-width:140px; display:inline-block;">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                <div class="mr-3">
+                    <select id="FilterAuthor" class="form-control form-control-sm" style="min-width:140px; display:inline-block;">
+                        <option value="">All Authors</option>
+                    </select>
+                </div>
+                <div class="mr-3">
+                    <select id="FilterLanguage" class="form-control form-control-sm" style="min-width:140px; display:inline-block;">
+                        <option value="">All Languages</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary btn-elevate btn-icon-sm" id="AddNew">
+                    Add New Book
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <div class="card-body">
+            <table id="BooksTable" class="table table-bordered table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Author</th>
+                        <th>Language</th>
+                        <th>ISBN</th>
+                        <th>Price</th>
+                        <th>PDF</th>
+                        <th>Featured</th>
+                        <th>Active</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Author</th>
+                        <th>Language</th>
+                        <th>ISBN</th>
+                        <th>Price</th>
+                        <th>PDF</th>
+                        <th>Featured</th>
+                        <th>Active</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var booksTable;
+
+    $(function () {
+        HideLoader();
+
+        // Load dropdown data
+        loadDropdowns();
+
+        // Show form
+        $('#AddNew').click(function () {
+            resetForm();
+            $('#BookFormTitle').text('Add Book');
+            $('#BookFormDiv').show();
+            $('#AddNew').hide();
+        });
+
+        // Cancel form
+        $('#CancelId').click(function () {
+            $('#BookFormDiv').hide();
+            $('#AddNew').show();
+            resetForm();
+        });
+
+        // Image preview
+        $('#BookCoverImageFile').change(function () {
+            var file = this.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#previewImg').attr('src', e.target.result);
+                    $('#imagePreview').show();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Submit
+        $('#SubmitId').click(function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            btn.prop('disabled', true);
+            SaveForm(btn);
+        });
+
+        function SaveForm(btn) {
+            var title = $("#Title").val().trim();
+            var categoryId = $("#CategoryId").val();
+            var price = $("#Price").val();
+
+            if (!title) {
+                toastr.error('Title is required');
+                btn.prop('disabled', false);
+                return;
+            }
+            if (!categoryId) {
+                toastr.error('Category is required');
+                btn.prop('disabled', false);
+                return;
+            }
+
+            var bookId = $('#BookId').val();
+            var url = bookId ? '/Book/Book/Update' : '/Book/Book/Add';
+
+            var formData = new FormData($('#BookForm')[0]);
+            // Handle checkbox values manually
+            formData.set('IsFeatured', $('#IsFeatured').is(':checked') ? 'true' : 'false');
+            formData.set('IsActive', $('#IsActive').is(':checked') ? 'true' : 'false');
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data && data.result > 0) {
+                        toastr.success(data.errorMessage);
+                        resetForm();
+                        $('#BookFormDiv').hide();
+                        $('#AddNew').show();
+                        booksTable.ajax.reload(null, false);
+                    } else {
+                        toastr.error(data.errorMessage || 'Please try again');
+                    }
+                    btn.prop('disabled', false);
+                },
+                error: function () {
+                    toastr.error('Please try again');
+                    btn.prop('disabled', false);
+                }
+            });
+        }
+
+        // DataTable
+        booksTable = $('#BooksTable').DataTable({
+            searching: true,
+            processing: true,
+            serverSide: false,
+            scrollX: true,
+            ajax: {
+                url: '/Book/Book/List',
+                type: 'GET',
+                dataSrc: ''
+            },
+            columns: [
+                {
+                    data: "bookCoverImage",
+                    orderable: false,
+                    render: function (data) {
+                        return data
+                            ? '<img src="' + data + '" style="height:45px;width:35px;object-fit:cover;" />'
+                            : '<span class="text-muted">No Image</span>';
+                    }
+                },
+                { data: "title" },
+                { data: "categoryName", defaultContent: "" },
+                { data: "authorName", defaultContent: "" },
+                { data: "languageName", defaultContent: "" },
+                { data: "isbn", defaultContent: "" },
+                { data: "price", render: function (d) { return parseFloat(d || 0).toFixed(2); } },
+                {
+                    data: "pdfFilePath",
+                    orderable: false,
+                    render: function (data) {
+                        return data
+                            ? '<a href="' + data + '" target="_blank" class="btn btn-xs btn-outline-danger" title="Open PDF"><i class="fas fa-file-pdf"></i> PDF</a>'
+                            : '<span class="text-muted small">None</span>';
+                    }
+                },
+                { data: "isFeatured", render: function (d) { return d ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>'; } },
+                { data: "isActive", render: function (d) { return d ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Inactive</span>'; } },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function () {
+                        return `<a href="#" class="edit-btn"><i class="fas fa-edit text-primary fa-sm"></i></a>&nbsp;&nbsp;<a href="#" class="delete-btn"><i class="fas fa-trash text-danger fa-sm"></i></a>`;
+                    }
+                }
+            ],
+            createdRow: function (row, data) {
+                $(row).find('.edit-btn').click(function () {
+                    populateEditForm(data);
+                });
+                $(row).find('.delete-btn').click(function () {
+                    bootbox.confirm({
+                        message: "Are you sure to delete this book?",
+                        title: 'Confirmation',
+                        buttons: {
+                            confirm: { label: 'Yes', className: 'btn-danger' },
+                            cancel: { label: 'No', className: 'btn-primary' }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Book/Book/Delete",
+                                    data: { id: data.id },
+                                    success: function (resp) {
+                                        if (resp.result === true) {
+                                            toastr.success(resp.errorMessage);
+                                            booksTable.ajax.reload(null, false);
+                                        } else {
+                                            toastr.error(resp.errorMessage);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+            },
+            columnDefs: [
+                { className: "text-center", targets: [0, 7, 8, 9, 10] }
+            ]
+        });
+
+        // Filter by Category, Author, Language
+        $('#FilterCategory, #FilterAuthor, #FilterLanguage').change(function () {
+            booksTable.ajax.reload(null, false);
+        });
+
+        // Custom filter
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            if (settings.nTable !== document.getElementById('BooksTable')) return true;
+            var catFilter = $('#FilterCategory').val();
+            var authFilter = $('#FilterAuthor').val();
+            var langFilter = $('#FilterLanguage').val();
+            var rowData = booksTable.row(dataIndex).data();
+            if (catFilter && rowData.categoryId !== catFilter) return false;
+            if (authFilter && rowData.authorId !== authFilter) return false;
+            if (langFilter && rowData.languageId !== langFilter) return false;
+            return true;
+        });
+
+        function populateEditForm(data) {
+            resetForm();
+            $('#BookId').val(data.id);
+            $('#Title').val(data.title);
+            $('#ISBN').val(data.isbn);
+            $('#Price').val(data.price);
+            $('#DiscountPrice').val(data.discountPrice);
+            $('#Quantity').val(data.quantity);
+            $('#Pages').val(data.pages);
+            $('#Publisher').val(data.publisher);
+            $('#PublishDate').val(data.publishDate ? data.publishDate.slice(0, 10) : '');
+            $('#Description').val(data.description);
+            $('#IsFeatured').prop('checked', data.isFeatured);
+            $('#IsActive').prop('checked', data.isActive);
+
+            // Set dropdowns
+            setSelectOption('#CategoryId', data.categoryId, data.categoryName);
+            setSelectOption('#AuthorId', data.authorId, data.authorName);
+            setSelectOption('#LanguageId', data.languageId, data.languageName);
+
+            if (data.bookCoverImage) {
+                $('#previewImg').attr('src', data.bookCoverImage);
+                $('#imagePreview').show();
+            }
+
+            if (data.pdfFilePath) {
+                $('#currentPdfLink').attr('href', data.pdfFilePath);
+                $('#pdfCurrent').show();
+            } else {
+                $('#pdfCurrent').hide();
+                $('#currentPdfLink').attr('href', '#');
+            }
+
+            $('#BookFormTitle').text('Edit Book');
+            $('#BookFormDiv').show();
+            $('#AddNew').hide();
+        }
+
+        function setSelectOption(selector, id, text) {
+            if (id) {
+                if ($(selector + ' option[value="' + id + '"]').length === 0) {
+                    $(selector).append(new Option(text || id, id));
+                }
+                $(selector).val(id);
+            }
+        }
+
+        function resetForm() {
+            $('#BookForm')[0].reset();
+            $('#BookId').val('');
+            $('#imagePreview').hide();
+            $('#previewImg').attr('src', '#');
+            $('#pdfCurrent').hide();
+            $('#currentPdfLink').attr('href', '#');
+            $('#BookPdfFile').val('');
+        }
+
+        function loadDropdowns() {
+            // Load Categories
+            $.get('/Book/Book/GetCategories', function (data) {
+                $.each(data, function (i, item) {
+                    $('#CategoryId').append(new Option(item.name, item.id));
+                    $('#FilterCategory').append(new Option(item.name, item.id));
+                });
+            });
+            // Load Authors
+            $.get('/Book/Book/GetAuthors', function (data) {
+                $.each(data, function (i, item) {
+                    $('#AuthorId').append(new Option(item.name, item.id));
+                    $('#FilterAuthor').append(new Option(item.name, item.id));
+                });
+            });
+            // Load Languages
+            $.get('/Book/Book/GetLanguages', function (data) {
+                $.each(data, function (i, item) {
+                    $('#LanguageId').append(new Option(item.name, item.id));
+                    $('#FilterLanguage').append(new Option(item.name, item.id));
+                });
+            });
+        }
+    });
+</script>

@@ -1,0 +1,150 @@
+@model UserBookListDTO
+@{
+    ViewData["Title"] = "Books";
+    var f = Model.Filter;
+    var showSidebarAd = AdProvider.IsEnabled(AdPlacements.Sidebar);
+    var adInterval = AdProvider.GetInterval(AdPlacements.BookListing);
+
+    string PageUrl(int page) => Url.Action("Books", "Store", new
+    {
+        area = "User",
+        Search = f.Search,
+        CategoryId = f.CategoryId,
+        AuthorId = f.AuthorId,
+        LanguageId = f.LanguageId,
+        MinPrice = f.MinPrice,
+        MaxPrice = f.MaxPrice,
+        Page = page
+    })!;
+}
+
+<section class="content pt-3">
+    <div class="container-fluid">
+        @await Component.InvokeAsync("AdPlacement", new { placement = AdPlacements.TopBanner })
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h1 class="h4 mb-0">Books</h1>
+            <span class="text-muted small">@Model.TotalCount book(s) found</span>
+        </div>
+
+        <div class="card filter-card shadow-sm mb-3">
+            <div class="card-body py-2 px-3">
+                <form method="get" asp-area="User" asp-controller="Store" asp-action="Books" id="bookFilterForm">
+                    <div class="form-row align-items-center">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-2 mb-xl-0">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light text-muted"><i class="fas fa-search"></i></span>
+                                </div>
+                                <input type="text" id="Search" name="Search" value="@f.Search" class="form-control" placeholder="Search by title..." maxlength="200" aria-label="Search by title" />
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 mb-2 mb-xl-0">
+                            <select id="CategoryId" name="CategoryId" class="form-control form-control-sm" aria-label="Filter by category">
+                                <option value="">All Categories</option>
+                                @foreach (var o in Model.Categories)
+                                {
+                                    <option value="@o.Id" selected="@(f.CategoryId == o.Id)">@o.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 mb-2 mb-xl-0">
+                            <select id="AuthorId" name="AuthorId" class="form-control form-control-sm" aria-label="Filter by author">
+                                <option value="">All Authors</option>
+                                @foreach (var o in Model.Authors)
+                                {
+                                    <option value="@o.Id" selected="@(f.AuthorId == o.Id)">@o.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 mb-2 mb-xl-0">
+                            <select id="LanguageId" name="LanguageId" class="form-control form-control-sm" aria-label="Filter by language">
+                                <option value="">All Languages</option>
+                                @foreach (var o in Model.Languages)
+                                {
+                                    <option value="@o.Id" selected="@(f.LanguageId == o.Id)">@o.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 mb-2 mb-xl-0">
+                            <div class="input-group input-group-sm">
+                                <input type="number" id="MinPrice" name="MinPrice" value="@f.MinPrice" class="form-control" placeholder="Min $" min="0" step="0.01" aria-label="Min price" />
+                                <div class="input-group-prepend input-group-append">
+                                    <span class="input-group-text px-1 bg-light text-muted">-</span>
+                                </div>
+                                <input type="number" id="MaxPrice" name="MaxPrice" value="@f.MaxPrice" class="form-control" placeholder="Max $" min="0" step="0.01" aria-label="Max price" />
+                            </div>
+                        </div>
+                        <div class="col-xl-1 col-lg-1 col-md-6 col-sm-12 d-flex">
+                            <button type="submit" class="btn btn-sm btn-primary flex-fill mr-1" title="Apply filter">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                            <a asp-area="User" asp-controller="Store" asp-action="Books" class="btn btn-sm btn-outline-secondary" title="Reset filter">
+                                <i class="fas fa-undo"></i>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="@(showSidebarAd ? "col-lg-9" : "col-12")">
+                @if (!Model.Books.Any())
+                {
+                    <div class="alert alert-info">No books match your search.</div>
+                }
+                else
+                {
+                    <div class="row">
+                        @for (var i = 0; i < Model.Books.Count; i++)
+                        {
+                            <div class="col-6 col-md-4 @(showSidebarAd ? "col-xl-4" : "col-xl-3") mb-3">
+                                <partial name="_BookCard" model="Model.Books[i]" />
+                            </div>
+                            @if ((i + 1) % adInterval == 0 && i + 1 < Model.Books.Count)
+                            {
+                                <div class="col-12">
+                                    @await Component.InvokeAsync("AdPlacement", new { placement = AdPlacements.BookListing })
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+
+                @if (Model.TotalPages > 1)
+                {
+                    var start = Math.Max(1, Model.Page - 2);
+                    var end = Math.Min(Model.TotalPages, Model.Page + 2);
+                    <nav aria-label="Book pages">
+                        <ul class="pagination justify-content-center flex-wrap">
+                            <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                                <a class="page-link" href="@PageUrl(Model.Page - 1)">&laquo;</a>
+                            </li>
+                            @for (var p = start; p <= end; p++)
+                            {
+                                <li class="page-item @(p == Model.Page ? "active" : "")">
+                                    <a class="page-link" href="@PageUrl(p)">@p</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@PageUrl(Model.Page + 1)">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+
+            @if (showSidebarAd)
+            {
+                <aside class="col-lg-3 d-none d-lg-block">
+                    <div class="sticky-top" style="top: 70px;">
+                        @await Component.InvokeAsync("AdPlacement", new { placement = AdPlacements.Sidebar })
+                    </div>
+                </aside>
+            }
+        </div>
+
+        @await Component.InvokeAsync("AdPlacement", new { placement = AdPlacements.Footer })
+    </div>
+</section>

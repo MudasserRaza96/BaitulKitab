@@ -1,0 +1,20 @@
+@model Baitul_Kitab.Ads.AdPlacementModel
+@{
+    // Load the provider script only once per page, whatever number of placements render.
+    var scriptLoaded = Context.Items.ContainsKey("AdProviderScriptLoaded");
+    Context.Items["AdProviderScriptLoaded"] = true;
+}
+@if (!scriptLoaded)
+{
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=@Model.PublisherId" crossorigin="anonymous"></script>
+}
+<div class="ad-slot ad-slot-@Model.Placement.ToLowerInvariant()">
+    <small class="ad-label">Advertisement</small>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="@Model.PublisherId"
+         data-ad-slot="@Model.SlotId"
+         data-ad-format="@Model.Format"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>

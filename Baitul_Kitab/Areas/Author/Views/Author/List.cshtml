@@ -1,0 +1,26 @@
+@model IEnumerable<Baitul_Kitab.Models.DTO.DTOAuthor>
+@{
+    ViewData["Title"] = "Authors List";
+}
+<h2>Authors List</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Biography</th>
+            <th>Date of Birth</th>
+            <th>Nationality</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var author in Model)
+        {
+            <tr>
+                <td>@author.Name</td>
+                <td>@author.Biography</td>
+                <td>@author.DateOfBirth?.ToString("yyyy-MM-dd")</td>
+                <td>@author.Nationality</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,409 @@
+﻿@{
+    ViewData["Title"] = "Laguages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card" id="Languagediv" style="display:none;">
+    <div class="card-header">
+        <h3 class="card-title">Add Language</h3>
+    </div>
+    <div class="card-body">
+        <div id="myDIV">
+            @using (Html.BeginForm("", "", FormMethod.Post, new { id = "LanguageForm", role = "form" }))
+            {
+
+                <div class="row mb-3">
+
+                    <div class="col-md-4">
+                        <label for="LanguageIsActive" class="form-label">Active</label>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-check form-switch">
+                            <input id="LanguageIsActive" class="form-check-input" name="LanguageIsActive" type="checkbox" checked />
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="Name" class="form-label">Name <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-8">
+                        <input id="Name" name="Name" maxlength="100"
+                               class="form-control" placeholder="Name" style="text-transform: capitalize;" type="text" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+
+                    <div class="col-md-4">
+                        <label for="Description" class="form-label">Description</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input id="Description" name="Description"
+                               class="form-control" placeholder="Description" style="text-transform: capitalize;" type="text" />
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="button" id="SubmitId" class="btn btn-primary mr-2">Submit</button>
+                    <button type="button" id="CancelId" class="btn btn-secondary">Cancel</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+
+            <div class="col-12 col-md-4 kt-portlet__head-label">
+                <h3 class="mb-0">
+                    Languages
+                </h3>
+            </div>
+
+            <div class="col-12 col-md-8 d-flex justify-content-md-end justify-content-start mt-2 mt-md-0">
+                <button type="button" class="btn btn-primary btn-elevate btn-icon-sm" id="AddNew">
+                    Add New Language
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <div class="card-body">
+            <table id="LanguagesTable" class="table table-bordered table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        HideLoader();
+        // Show form
+        $('#AddNew').click(function () {
+            $('#Languagediv').show();
+            $('#AddNew').hide();
+        });
+
+        // Cancel form
+        $('#CancelId').click(function () {
+            $('#Languagediv').hide();
+            $('#AddNew').show();
+            $("#LanguageForm")[0].reset();
+        });
+
+        // Submit button click
+        $('#SubmitId').click(function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            btn.prop('disabled', true);
+            SaveForm();
+        });
+
+        $('#UpdateSubmitId').click(function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            btn.prop('disabled', true);
+            ShowLoader();
+            UpdateSaveForm();
+        });
+
+
+        // Save Form Function
+        function SaveForm() {
+            var name = $("#Name").val().trim();
+            if (name === "") {
+                toastr.error('Please Enter Name');
+                return;
+            }
+
+            var formData = new FormData($('#LanguageForm')[0]);
+            formData.append('IsActive', $('#LanguageIsActive').prop('checked'));
+
+            $.ajax({
+                url: '/Category/Language/AddLanguage',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+
+                    if (data.result == -5) {
+                        toastr.error('Name Already Exists');
+                        $('#UpdateSubmitId').prop('disabled', false);
+                    }
+                    else if (data.result > 0) {
+                        toastr.success(data.errorMessage);
+                        $("#LanguageForm")[0].reset();
+                        $('#Languagediv').hide();
+                        $('#AddNew').show();
+                        $('#LanguagesTable').DataTable().ajax.reload(null, false);
+                        $('#SubmitId').prop('disabled', false);
+                        $('#SubmitId').text('Submit');
+
+
+                    }
+                    else {
+                        toastr.error('Please try again');
+                        $('#SubmitId').prop('disabled', false);
+
+                    }
+                }
+            });
+        }
+
+    });
+
+    function UpdateSaveForm() {
+        debugger
+        $.ajax({
+            type: 'POST',
+            url: '/Category/Language/AddLanguage',
+            data: {
+                Id: $('#UpdateLanguageId').val(),
+                Name: $('#UpdateName').val(),
+                IsActive: $('#UpdateLanguageIsActive').is(':checked'),
+                Description: $('#UpdateDescription').val()
+            },
+            success: function (data) {
+                debugger
+                if (data.result == -5) {
+                    toastr.error('Name Already Exists')
+                    $('#UpdateSubmitId').prop('disabled', false);
+                    $('#UpdateSubmitId').text('Submit');
+                    HideLoader();
+                }
+                else if (data.result > 0) {
+                    $("#myModal").modal('hide');
+                    toastr.success('Successfully Updated');
+                    //$('#UpdateLanguageForm').bootstrapValidator("resetForm", true);
+                    $('#LanguagesTable').DataTable().ajax.reload(null, false);
+                    $('#UpdateSubmitId').prop('disabled', false);
+                    $('#UpdateSubmitId').text('Submit');
+                    HideLoader();
+                }
+            },
+            error: function () {
+                toastr.error('Please try again')
+                $('#UpdateSubmitId').prop('disabled', false);
+                $('#UpdateSubmitId').text('Submit');
+                HideLoader();
+
+
+            }
+
+        })
+    }
+
+    // ========================
+    // DATATABLE INITIALIZATION
+    // ========================
+    $(function () {
+
+        $('#LanguagesTable').DataTable({
+
+            searching: true,
+            processing: true,
+            serverSide: true,
+            scrollX: true,
+            //autoWidth: false,
+
+            ajax: {
+                url: '/Category/Language/GetLanguageList',
+                type: 'POST'
+            },
+
+            columns: [
+                { data: "id", visible: false },
+                { data: "name" },
+                { data: "description" },
+                // {
+                //     data: "createdOn",
+                //     render: function (data) {
+                //         return data ? data.slice(0, 10) : "";
+                //     }
+                // },
+                {
+                    data: "isActive",
+                    render: function (data) {
+                        debugger
+                        return data
+                            ? '<i class="fas fa-check fa-sm"></i>'
+                            : '<i class="fas fa-times fa-sm"></i>';
+                    }
+                },
+                {
+                    data: "",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `
+                    <a href="#" class="edit-btn">
+                            <i class="fas fa-edit text-primary fa-sm"></i>
+                    </a>
+                    &nbsp;&nbsp;
+                    <a href="#" class="delete-btn">
+                            <i class="fas fa-trash text-danger fa-sm"></i>
+                    </a>
+                `;
+                    }
+                }
+            ],
+            createdRow: function (row, data, index) {
+                $(row).find('.edit-btn').click(function () {
+                    debugger
+                    $('#LanguagesTable').find('tr.selected').removeClass('selected');
+                    $(row).addClass('selected');
+                    var rowData = $('#LanguagesTable').DataTable().row('.selected').data();
+                    $('#UpdateLanguageId').val(rowData.id);
+                    $('#UpdateName').val(rowData.name);
+                    $('#UpdateDescription').val(rowData.description);
+                    $('#UpdateLanguageIsActive').prop('checked', rowData.isActive);
+                    $("#myModal").modal('show');
+                    $(row).removeClass('selected');
+                });
+
+                $(row).find('.delete-btn').click(function () {
+
+                    $('#LanguagesTable').find('tr.selected').removeClass('selected');
+                    $(row).addClass('selected');
+
+                    var rowData = $('#LanguagesTable').DataTable().row('.selected').data();
+                    debugger
+                    bootbox.confirm({
+                        message: "Are you sure to delete?",
+                        title: 'Confirmation',
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-primary'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Category/Language/DeleteLanguage",
+                                    data: {
+                                        id: rowData.id,
+                                    },
+                                    success: function (resp) {
+                                        debugger
+                                        if (resp.result === true) {
+                                            toastr.success(resp.errorMessage);
+                                            $('#LanguagesTable').DataTable().ajax.reload(null, false);
+                                        } else {
+                                            toastr.error(resp.errorMessage)
+                                        }
+
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+            },
+            columnDefs: [
+                { searchable: true, targets: [1, 2, 3] },
+                { orderable: false, targets: 4 },
+                { className: "text-center", targets: [3, 4] }
+            ]
+        });
+        // table.on('draw', function () {
+        //     table.columns.adjust();
+        // });
+    });
+</script>
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            @using (Html.BeginForm("", "", FormMethod.Post, new { id = "UpdateLanguageForm", role = "form" }))
+            {
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Edit Language</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input id="UpdateLanguageId" name="Id" type="hidden">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <label for="UpdateLanguageIsActive">Active</label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="switch">
+                                                <label class="kt-checkbox kt-checkbox--brand">
+                                                    <input id="UpdateLanguageIsActive" class="checkbox-style" name="UpdateLanguageIsActive" type="checkbox">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <label for="UpdateName">Name<span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input id="UpdateName" name="Name" style="text-transform: capitalize;" maxlength="100" type="text" class="form-control" placeholder="Name" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <label for="UpdateDescription">Description</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input id="UpdateDescription" name="UpdateDescription" style="text-transform: capitalize;" type="text" class="form-control" placeholder="Description" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+
+                                <div class="form-actions noborder float-right" id="hideform">
+                                    <input type="button" id="UpdateSubmitId" class="btn btn-primary" value="Submit" />
+                                    <button type="button" id="close" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+    </div>
+</div>

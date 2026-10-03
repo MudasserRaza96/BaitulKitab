@@ -1,0 +1,126 @@
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<section class="content pt-3">
+    <div class="container-fluid">
+        @await Component.InvokeAsync("AdPlacement", new { placement = AdPlacements.TopBanner })
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent p-0 mb-3">
+                <li class="breadcrumb-item"><a asp-area="User" asp-controller="Store" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Contact Us</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Contact Details Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm border-0 h-100" style="border-radius: 10px;">
+                    <div class="card-header bg-primary text-white" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                        <h5 class="mb-0 font-weight-bold"><i class="fas fa-info-circle mr-2"></i>Get in Touch</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-4">
+                            Have a question about a book, need help finding a title, or want to inquire about bulk orders? Reach out to us anytime!
+                        </p>
+
+                        <div class="d-flex align-items-start mb-3">
+                            <span class="badge badge-primary p-2 mr-3 rounded"><i class="fas fa-map-marker-alt fa-lg"></i></span>
+                            <div>
+                                <h6 class="font-weight-bold mb-1">Our Location</h6>
+                                <p class="text-muted small mb-0">Baitul Kitab Store, Main Book Market, Pakistan</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-3">
+                            <span class="badge badge-success p-2 mr-3 rounded"><i class="fas fa-phone-alt fa-lg"></i></span>
+                            <div>
+                                <h6 class="font-weight-bold mb-1">Phone / WhatsApp</h6>
+                                <p class="text-muted small mb-0">+92 300 1234567</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-3">
+                            <span class="badge badge-info p-2 mr-3 rounded"><i class="fas fa-envelope fa-lg"></i></span>
+                            <div>
+                                <h6 class="font-weight-bold mb-1">Email Support</h6>
+                                <p class="text-muted small mb-0">support@baitulkitab.com</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start">
+                            <span class="badge badge-warning p-2 mr-3 rounded"><i class="fas fa-clock fa-lg"></i></span>
+                            <div>
+                                <h6 class="font-weight-bold mb-1">Working Hours</h6>
+                                <p class="text-muted small mb-0">Monday – Saturday: 9:00 AM – 8:00 PM<br />Sunday: Closed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-sm border-0" style="border-radius: 10px;">
+                    <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                        <h4 class="font-weight-bold mb-1">Send Us a Message</h4>
+                        <p class="text-muted small">Fill out the form below and our team will get back to you within 24 hours.</p>
+                    </div>
+                    <div class="card-body p-4">
+                        @if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle mr-2"></i>@ViewBag.SuccessMessage
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>@ViewBag.ErrorMessage
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+
+                        <form method="post" asp-area="User" asp-controller="Store" asp-action="Contact">
+                            @Html.AntiForgeryToken()
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="name" class="font-weight-bold">Your Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="John Doe" required maxlength="100" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="email" class="font-weight-bold">Email Address <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required maxlength="150" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subject" class="font-weight-bold">Subject</label>
+                                <input type="text" class="form-control" id="subject" name="subject" placeholder="Inquiry about book availability, order, etc." maxlength="200" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message" class="font-weight-bold">Message <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Write your message here..." required maxlength="2000"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary px-4 py-2">
+                                <i class="fas fa-paper-plane mr-1"></i> Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @await Component.InvokeAsync("AdPlacement", new { placement = AdPlacements.Footer })
+    </div>
+</section>

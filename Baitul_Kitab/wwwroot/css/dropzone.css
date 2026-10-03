@@ -1,0 +1,130 @@
+/*! Image Uploader - v1.0.0 - 15/07/2019
+ * Copyright (c) 2019 Christian Bayer; Licensed MIT */
+.image-uploader {
+    min-height: 200px;
+    height: auto;
+    /* Allow the height to grow based on content */
+    border: 1px #192f6a dashed !important;
+    border-radius: 5px;
+    position: relative;
+}
+
+
+.input-images {
+    border: 1px solid #ced4da;
+    /* Default Bootstrap border color */
+    border-radius: 0.25rem;
+}
+
+.image-uploader.drag-over {
+    background-color: #f3f3f3
+}
+
+.image-uploader input[type="file"] {
+    width: 0;
+    height: 0;
+    position: absolute;
+    z-index: -1;
+    opacity: 0
+}
+
+.image-uploader .upload-text {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    font-size: 16px;
+    display: flex;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column
+}
+
+.image-uploader .upload-text i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: .5rem
+}
+
+.image-uploader .upload-text span {
+    display: block
+}
+
+.image-uploader.has-files .upload-text {
+    display: none
+}
+
+
+.image-uploader .uploaded {
+    margin-left: 10px;
+    padding: 10px;
+    line-height: 0;
+}
+
+.image-uploader .uploaded .uploaded-image {
+    margin-right: 50px;
+    display: inline-block;
+    width: calc(16.6666667% - 1rem); 
+    padding-bottom: calc(16.6666667% - 1rem);
+    position: relative;
+    margin: .5rem;
+    border-radius: 50%;
+    cursor: default;
+}
+
+.image-uploader .uploaded .uploaded-image img {
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+}
+
+@media (max-width: 768px) {
+    .image-uploader .uploaded .uploaded-image {
+        width: calc(33.333333% - 1rem); 
+        padding-bottom: calc(33.333333% - 1rem); 
+    }
+}
+
+.image-uploader .uploaded .uploaded-image .delete-image {
+    color: red !important;
+    background-color: white !important;
+    cursor: pointer;
+    position: absolute;
+    top: .7rem;
+    right: .2rem;
+    font-size: 16px !important;
+}
+
+
+.image-uploader .uploaded .uploaded-image:hover .delete-image {
+    display: block
+}
+
+.image-uploader .uploaded .uploaded-image .delete-image i {
+    color: #fff;
+    font-size: .8rem
+}
+
+.image-uploader .capture-icon {
+    position: absolute;
+    top: 11px;
+    right: 14px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Position the capture text on the right side */
+.image-uploader .capture-text {
+    font-size: 8px;
+    position: absolute;
+    top: 30px;
+    right: 12px;
+    color: #192f6a;
+}
+.color-blue {
+    color: #192f6a;
+}

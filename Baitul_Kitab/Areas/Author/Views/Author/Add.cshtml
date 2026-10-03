@@ -1,0 +1,372 @@
+@* Author Add/Edit page with full CRUD UI and AJAX logic, matching Language page style. *@
+@{
+    ViewData["Title"] = "Authors";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/lib/select2/select2.min.css" rel="stylesheet" />
+<div class="card" id="Authordiv" style="display:none;">
+    <div class="card-header">
+        <h3 class="card-title">Add Author</h3>
+    </div>
+    <div class="card-body">
+        <div id="myDIV">
+            @using (Html.BeginForm("", "", FormMethod.Post, new { id = "AuthorForm", role = "form", @class = "form-horizontal" }))
+            {
+                <div class="form-group row align-items-center mb-2">
+                    <label for="Name" class="col-sm-2 col-form-label text-end">Name <span class="text-danger">*</span></label>
+                    <div class="col-sm-4">
+                        <input id="Name" name="Name" maxlength="100" class="form-control" placeholder="Name" style="text-transform: capitalize;" type="text" />
+                    </div>
+                    <label for="DateOfBirth" class="col-sm-2 col-form-label text-end">Date of Birth</label>
+                    <div class="col-sm-4">
+                        <input id="DateOfBirth" name="DateOfBirth" class="form-control" type="date" />
+                    </div>
+                </div>
+                <div class="form-group row align-items-center mb-2">
+                    <label for="Biography" class="col-sm-2 col-form-label text-end">Biography</label>
+                    <div class="col-sm-4">
+                        <textarea id="Biography" name="Biography" class="form-control" placeholder="Biography"></textarea>
+                    </div>
+                    <label for="Nationality" class="col-sm-2 col-form-label text-end">Nationality</label>
+                    <div class="col-sm-4">
+                        <select id="Nationality" name="Nationality" class="form-control" style="width:100%"></select>
+                    </div>
+                </div>
+                <div class="form-group row align-items-center mb-2">
+                    <label for="IsActive" class="col-sm-2 col-form-label text-end">Active</label>
+                    <div class="col-sm-4">
+                        <input id="IsActive" name="IsActive" class="form-check-input ms-2" type="checkbox" checked />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-12 d-flex justify-content-end">
+                        <button type="button" id="SubmitId" class="btn btn-primary mr-2">Submit</button>
+                        <button type="button" id="CancelId" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-4 kt-portlet__head-label">
+                <h3 class="mb-0">
+                    Authors
+                </h3>
+            </div>
+            <div class="col-12 col-md-8 d-flex justify-content-md-end justify-content-start mt-2 mt-md-0">
+                <button type="button" class="btn btn-primary btn-elevate btn-icon-sm" id="AddNew">
+                    Add New Author
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <div class="card-body">
+            <table id="AuthorsTable" class="table table-bordered table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Biography</th>
+                        <th>Date of Birth</th>
+                        <th>Nationality</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Biography</th>
+                        <th>Date of Birth</th>
+                        <th>Nationality</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="authorEditModal" class="modal fade">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-body">
+                                <form id="UpdateAuthorForm" role="form">
+                                    <div class="modal-content ">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Edit Author</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input id="UpdateAuthorId" name="Id" type="hidden">
+                                            <div class="form-group row align-items-center mb-2">
+                                                <label for="UpdateName" class="col-sm-2 col-form-label text-end">Name <span class="text-danger">*</span></label>
+                                                <div class="col-sm-4">
+                                                    <input id="UpdateName" name="Name" maxlength="100" type="text" class="form-control" placeholder="Name" style="text-transform: capitalize;" />
+                                                </div>
+                                                <label for="UpdateDateOfBirth" class="col-sm-2 col-form-label text-end">Date of Birth</label>
+                                                <div class="col-sm-4">
+                                                    <input id="UpdateDateOfBirth" name="DateOfBirth" class="form-control" type="date" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row align-items-center mb-2">
+                                                <label for="UpdateBiography" class="col-sm-2 col-form-label text-end">Biography</label>
+                                                <div class="col-sm-4">
+                                                    <textarea id="UpdateBiography" name="Biography" class="form-control" placeholder="Biography"></textarea>
+                                                </div>
+                                                <label for="UpdateNationality" class="col-sm-2 col-form-label text-end">Nationality</label>
+                                                <div class="col-sm-4">
+                                                    <select id="UpdateNationality" name="Nationality" class="form-control" style="width:100%"></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row align-items-center mb-2">
+                                                <label for="UpdateIsActive" class="col-sm-2 col-form-label text-end">Active</label>
+                                                <div class="col-sm-4">
+                                                    <input id="UpdateIsActive" name="IsActive" class="form-check-input ms-2" type="checkbox" checked />
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <input type="button" id="UpdateSubmitId" class="btn btn-primary" value="Submit" />
+                                                <button type="button" id="closeEditModal" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+<script>
+    $(function () {
+        HideLoader();
+
+        // Initialize Select2 for Nationality (Add form)
+        $('#Nationality').select2({
+            placeholder: 'Select a nationality',
+            allowClear: true,
+            ajax: {
+                url: '/Author/Author/GetNationalities',
+                dataType: 'json',
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (item) {
+                            return { id: item, text: item };
+                        })
+                    };
+                }
+            }
+        });
+
+        // Initialize Select2 for UpdateNationality (Edit modal)
+        $('#UpdateNationality').select2({
+            placeholder: 'Select a nationality',
+            allowClear: true,
+            ajax: {
+                url: '/Author/Author/GetNationalities',
+                dataType: 'json',
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (item) {
+                            return { id: item, text: item };
+                        })
+                    };
+                }
+            }
+        });
+
+        // Show form
+        $('#AddNew').click(function () {
+            $('#Authordiv').show();
+            $('#AddNew').hide();
+        });
+
+        // Cancel form
+        $('#CancelId').click(function () {
+            $('#Authordiv').hide();
+            $('#AddNew').show();
+            $("#AuthorForm")[0].reset();
+        });
+
+        // Submit button click
+        $('#SubmitId').click(function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            btn.prop('disabled', true);
+            SaveForm();
+        });
+
+
+        // Save Form Function
+        function SaveForm() {
+            var name = $("#Name").val().trim();
+            if (name === "") {
+                toastr.error('Please Enter Name');
+                $('#SubmitId').prop('disabled', false);
+                return;
+            }
+
+            var formData = $('#AuthorForm').serialize();
+
+            $.ajax({
+                url: '/Author/Author/Add',
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    if (data && data.result == -5) {
+                        toastr.error('Name Already Exists');
+                        $('#SubmitId').prop('disabled', false);
+                    }
+                    else if (data && (data.result > 0 || data.success)) {
+                        toastr.success(data.errorMessage || 'Author added successfully');
+                        $("#AuthorForm")[0].reset();
+                        $('#Authordiv').hide();
+                        $('#AddNew').show();
+                        $('#AuthorsTable').DataTable().ajax.reload(null, false);
+                        $('#SubmitId').prop('disabled', false);
+                        $('#SubmitId').text('Submit');
+                    }
+                    else {
+                        toastr.error('Please try again');
+                        $('#SubmitId').prop('disabled', false);
+                    }
+                },
+                error: function () {
+                    toastr.error('Please try again');
+                    $('#SubmitId').prop('disabled', false);
+                }
+            });
+        }
+
+        // ========================
+        // DATATABLE INITIALIZATION
+        // ========================
+        $('#AuthorsTable').DataTable({
+            searching: true,
+            processing: true,
+            serverSide: false,
+            scrollX: true,
+            ajax: {
+                url: '/Author/Author/List',
+                type: 'GET',
+                dataSrc: ''
+            },
+            columns: [
+                { data: "name" },
+                { data: "biography" },
+                { data: "dateOfBirth", render: function (data) { return data ? data.slice(0, 10) : ""; } },
+                { data: "nationality" },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `
+                            <a href="#" class="edit-btn"><i class="fas fa-edit text-primary fa-sm"></i></a>
+                            &nbsp;&nbsp;
+                            <a href="#" class="delete-btn"><i class="fas fa-trash text-danger fa-sm"></i></a>
+                        `;
+                    }
+                }
+            ],
+
+            createdRow: function (row, data, index) {
+                $(row).find('.edit-btn').click(function () {
+                    $('#AuthorsTable').find('tr.selected').removeClass('selected');
+                    $(row).addClass('selected');
+                    var rowData = $('#AuthorsTable').DataTable().row('.selected').data();
+                    $('#UpdateAuthorId').val(rowData.id);
+                    $('#UpdateName').val(rowData.name);
+                    $('#UpdateBiography').val(rowData.biography);
+                    $('#UpdateDateOfBirth').val(rowData.dateOfBirth ? rowData.dateOfBirth.slice(0, 10) : '');
+                    // Set nationality in Select2 for edit modal
+                    if ($('#UpdateNationality').data('select2')) {
+                        var newOption = new Option(rowData.nationality, rowData.nationality, true, true);
+                        $('#UpdateNationality').append(newOption).trigger('change');
+                    } else {
+                        $('#UpdateNationality').val(rowData.nationality);
+                    }
+                    $("#authorEditModal").modal('show');
+                    $(row).removeClass('selected');
+                });
+
+                $(row).find('.delete-btn').click(function () {
+                    $('#AuthorsTable').find('tr.selected').removeClass('selected');
+                    $(row).addClass('selected');
+                    var rowData = $('#AuthorsTable').DataTable().row('.selected').data();
+                    bootbox.confirm({
+                        message: "Are you sure to delete?",
+                        title: 'Confirmation',
+                        buttons: {
+                            confirm: { label: 'Yes', className: 'btn-danger' },
+                            cancel: { label: 'No', className: 'btn-primary' }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Author/Author/Delete",
+                                    data: { id: rowData.id },
+                                    success: function (resp) {
+                                        if (resp.result === true) {
+                                            toastr.success(resp.errorMessage);
+                                            $('#AuthorsTable').DataTable().ajax.reload(null, false);
+                                        } else {
+                                            toastr.error(resp.errorMessage)
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+            },
+            columnDefs: [
+                { searchable: true, targets: [0, 1, 2, 3] },
+                { orderable: false, targets: 4 },
+                { className: "text-center", targets: [4] }
+            ]
+        });
+
+        // Update Author (move this outside DataTable config)
+        $('#UpdateSubmitId').click(function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            btn.prop('disabled', true);
+            ShowLoader();
+            var formData = {
+                Id: $('#UpdateAuthorId').val(),
+                Name: $('#UpdateName').val(),
+                Biography: $('#UpdateBiography').val(),
+                DateOfBirth: $('#UpdateDateOfBirth').val(),
+                Nationality: $('#UpdateNationality').val()
+            };
+            if (!formData.Name || formData.Name.trim() === "") {
+                toastr.error('Please Enter Name');
+                btn.prop('disabled', false);
+                HideLoader();
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/Author/Author/Update',
+                data: formData,
+                success: function (data) {
+                    if (data.result > 0) {
+                        $("#authorEditModal").modal('hide');
+                        toastr.success('Successfully Updated');
+                        $('#AuthorsTable').DataTable().ajax.reload(null, false);
+                    } else {
+                        toastr.error(data.errorMessage || 'Please try again');
+                    }
+                    btn.prop('disabled', false);
+                    HideLoader();
+                },
+                error: function () {
+                    toastr.error('Please try again');
+                    btn.prop('disabled', false);
+                    HideLoader();
+                }
+            });
+        });
+    });
+</script>
