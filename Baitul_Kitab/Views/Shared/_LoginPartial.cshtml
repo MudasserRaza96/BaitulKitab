@@ -4,17 +4,16 @@
 @inject SignInManager<ApplicationUser > SignInManager
 @inject UserManager<ApplicationUser > UserManager
 
-<ul class="navbar-nav align-items-center">
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
-        <a id="manage" class="nav-link text-dark font-weight-bold" asp-area="Identity" asp-page="/Account/Manage/Index" title="My Account">
-            <i class="fas fa-user-circle mr-1"></i>My Account
+        <a id="manage" class="nav-link font-weight-bold text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="My Account">
+            <i class="fas fa-user-circle mr-1 text-primary"></i>My Account
         </a>
     </li>
-    <li class="nav-item">
-        <form id="logoutForm" class="form-inline d-inline" method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Store", new { area = "User" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-danger border-0 font-weight-bold">
+    <li class="nav-item ml-1">
+        <form id="logoutForm" class="form-inline d-inline m-0" method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Store", new { area = "User" })">
+            <button id="logout" type="submit" class="btn btn-sm btn-outline-danger store-nav-btn-logout">
                 <i class="fas fa-sign-out-alt mr-1"></i>Logout
             </button>
         </form>
@@ -27,10 +26,9 @@ else
             <i class="fas fa-sign-in-alt mr-1"></i>Login
         </a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link btn btn-sm btn-primary text-white font-weight-bold px-3 ml-2" id="register" asp-area="Identity" asp-page="/Account/Register">
+    <li class="nav-item ml-2">
+        <a class="btn btn-sm btn-primary text-white store-nav-btn-register" id="register" asp-area="Identity" asp-page="/Account/Register">
             <i class="fas fa-user-plus mr-1"></i>Register
         </a>
     </li>
 }
-</ul>

@@ -101,10 +101,10 @@
         else
         {
             <!-- User / Customer Top Bar Navigation -->
-            <nav class="main-header navbar navbar-expand-md navbar-light navbar-white shadow-sm">
-                <div class="container">
+            <nav class="main-header navbar navbar-expand-lg navbar-light bg-white shadow-sm store-navbar">
+                <div class="container-fluid px-lg-4">
                     <a href="@Url.Action("Index", "Store", new { area = "User" })" class="navbar-brand">
-                        <img src="~/dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                        <img src="~/dist/img/AdminLTELogo.png" alt="Logo" class="brand-image img-circle elevation-2">
                         <span class="brand-text font-weight-bold">Baitul Kitab</span>
                     </a>
 
@@ -114,30 +114,30 @@
 
                     <div class="collapse navbar-collapse order-3" id="navbarCollapse">
                         <!-- Left navbar links -->
-                        <ul class="navbar-nav">
+                        <ul class="navbar-nav mr-auto">
                             <li class="nav-item">
-                                <a href="@Url.Action("Index", "Store", new { area = "User" })" class="nav-link @(isUserHomeActive ? "active font-weight-bold text-primary" : "")">
-                                    <i class="fas fa-home mr-1"></i> Home
+                                <a href="@Url.Action("Index", "Store", new { area = "User" })" class="nav-link @(isUserHomeActive ? "active" : "")">
+                                    <i class="fas fa-home"></i><span>Home</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="@Url.Action("Books", "Store", new { area = "User" })" class="nav-link @(isUserBooksActive ? "active font-weight-bold text-primary" : "")">
-                                    <i class="fas fa-book mr-1"></i> Books
+                                <a href="@Url.Action("Books", "Store", new { area = "User" })" class="nav-link @(isUserBooksActive ? "active" : "")">
+                                    <i class="fas fa-book"></i><span>Books</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="@Url.Action("Categories", "Store", new { area = "User" })" class="nav-link @(isUserCategoriesActive ? "active font-weight-bold text-primary" : "")">
-                                    <i class="fas fa-th-large mr-1"></i> Categories
+                                <a href="@Url.Action("Categories", "Store", new { area = "User" })" class="nav-link @(isUserCategoriesActive ? "active" : "")">
+                                    <i class="fas fa-th-large"></i><span>Categories</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="@Url.Action("Authors", "Store", new { area = "User" })" class="nav-link @(isUserAuthorsActive ? "active font-weight-bold text-primary" : "")">
-                                    <i class="fas fa-feather-alt mr-1"></i> Authors
+                                <a href="@Url.Action("Authors", "Store", new { area = "User" })" class="nav-link @(isUserAuthorsActive ? "active" : "")">
+                                    <i class="fas fa-feather-alt"></i><span>Authors</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="@Url.Action("Languages", "Store", new { area = "User" })" class="nav-link @(isUserLanguagesActive ? "active font-weight-bold text-primary" : "")">
-                                    <i class="fas fa-globe mr-1"></i> Languages
+                                <a href="@Url.Action("Languages", "Store", new { area = "User" })" class="nav-link @(isUserLanguagesActive ? "active" : "")">
+                                    <i class="fas fa-globe"></i><span>Languages</span>
                                 </a>
                             </li>
 
@@ -145,34 +145,34 @@
                             @if (User.Identity?.IsAuthenticated == true && !isAdmin)
                             {
                                 <li class="nav-item">
-                                    <a href="@Url.Action("Cart", "Store", new { area = "User" })" class="nav-link @(isUserCartActive ? "active font-weight-bold text-primary" : "")">
-                                        <i class="fas fa-shopping-cart mr-1"></i> My Cart
+                                    <a href="@Url.Action("Cart", "Store", new { area = "User" })" class="nav-link @(isUserCartActive ? "active" : "")">
+                                        <i class="fas fa-shopping-cart"></i><span>My Cart</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="@Url.Action("Orders", "Store", new { area = "User" })" class="nav-link @(isUserOrdersActive ? "active font-weight-bold text-primary" : "")">
-                                        <i class="fas fa-box mr-1"></i> My Orders
+                                    <a href="@Url.Action("Orders", "Store", new { area = "User" })" class="nav-link @(isUserOrdersActive ? "active" : "")">
+                                        <i class="fas fa-box"></i><span>My Orders</span>
                                     </a>
                                 </li>
                             }
 
                             <li class="nav-item">
-                                <a href="@Url.Action("About", "Store", new { area = "User" })" class="nav-link @(isUserAboutActive ? "active font-weight-bold text-primary" : "")">
-                                    <i class="fas fa-info-circle mr-1"></i> About Us
+                                <a href="@Url.Action("About", "Store", new { area = "User" })" class="nav-link @(isUserAboutActive ? "active" : "")">
+                                    <i class="fas fa-info-circle"></i><span>About Us</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="@Url.Action("Contact", "Store", new { area = "User" })" class="nav-link @(isUserContactActive ? "active font-weight-bold text-primary" : "")">
-                                    <i class="fas fa-envelope mr-1"></i> Contact Us
+                                <a href="@Url.Action("Contact", "Store", new { area = "User" })" class="nav-link @(isUserContactActive ? "active" : "")">
+                                    <i class="fas fa-envelope"></i><span>Contact Us</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
 
                     <!-- Right navbar links -->
-                    <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto align-items-center">
+                    <ul class="order-1 order-lg-3 navbar-nav navbar-no-expand ml-auto align-items-center">
                         <li class="nav-item">
-                            <a class="nav-link" data-widget="fullscreen" href="#" role="button" title="Full Screen">
+                            <a class="nav-link store-fullscreen-btn" data-widget="fullscreen" href="#" role="button" title="Full Screen">
                                 <i class="fas fa-expand-arrows-alt"></i>
                             </a>
                         </li>
