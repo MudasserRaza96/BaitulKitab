@@ -56,6 +56,7 @@ namespace Baitul_Kitab.BAL.Services
                 DateOfBirth = author.DateOfBirth,
                 Nationality = author.Nationality,
                 IsActive = author.IsActive,
+                IsDeleted = false,
                 CreatedBy = author.CreatedBy,
                 CreatedOn = DateTime.UtcNow
             };

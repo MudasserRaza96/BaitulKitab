@@ -35,7 +35,7 @@
                 <div class="form-group row align-items-center mb-2">
                     <label for="IsActive" class="col-sm-2 col-form-label text-end">Active</label>
                     <div class="col-sm-4">
-                        <input id="IsActive" name="IsActive" class="form-check-input ms-2" type="checkbox" checked />
+                        <input id="IsActive" name="IsActive" class="form-check-input ms-2" type="checkbox" value="true" checked />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -124,7 +124,7 @@
                                             <div class="form-group row align-items-center mb-2">
                                                 <label for="UpdateIsActive" class="col-sm-2 col-form-label text-end">Active</label>
                                                 <div class="col-sm-4">
-                                                    <input id="UpdateIsActive" name="IsActive" class="form-check-input ms-2" type="checkbox" checked />
+                                                    <input id="UpdateIsActive" name="IsActive" class="form-check-input ms-2" type="checkbox" value="true" checked />
                                                 </div>
                                             </div>
                                             <div class="d-flex justify-content-end">
@@ -206,7 +206,13 @@
                 return;
             }
 
-            var formData = $('#AuthorForm').serialize();
+            var formData = {
+                Name: name,
+                Biography: $("#Biography").val(),
+                DateOfBirth: $("#DateOfBirth").val(),
+                Nationality: $("#Nationality").val(),
+                IsActive: $("#IsActive").is(':checked')
+            };
 
             $.ajax({
                 url: '/Author/Author/Add',
@@ -278,6 +284,7 @@
                     $('#UpdateName').val(rowData.name);
                     $('#UpdateBiography').val(rowData.biography);
                     $('#UpdateDateOfBirth').val(rowData.dateOfBirth ? rowData.dateOfBirth.slice(0, 10) : '');
+                    $('#UpdateIsActive').prop('checked', rowData.isActive !== false);
                     // Set nationality in Select2 for edit modal
                     if ($('#UpdateNationality').data('select2')) {
                         var newOption = new Option(rowData.nationality, rowData.nationality, true, true);
@@ -338,7 +345,8 @@
                 Name: $('#UpdateName').val(),
                 Biography: $('#UpdateBiography').val(),
                 DateOfBirth: $('#UpdateDateOfBirth').val(),
-                Nationality: $('#UpdateNationality').val()
+                Nationality: $('#UpdateNationality').val(),
+                IsActive: $('#UpdateIsActive').is(':checked')
             };
             if (!formData.Name || formData.Name.trim() === "") {
                 toastr.error('Please Enter Name');

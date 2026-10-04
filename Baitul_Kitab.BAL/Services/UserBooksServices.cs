@@ -109,7 +109,7 @@ namespace Baitul_Kitab.BAL.Services
                     .Where(c => c.IsDeleted != true && c.IsActive).OrderBy(c => c.Name)
                     .Select(c => new UserFilterOptionDTO { Id = c.Id, Name = c.Name }).ToListAsync(),
                 Authors = await _context.Authors.AsNoTracking()
-                    .Where(a => a.IsDeleted != true && a.IsActive).OrderBy(a => a.Name)
+                    .Where(a => a.IsDeleted != true && (a.IsActive || _context.Books.Any(b => b.AuthorId == a.Id && b.IsDeleted != true && b.IsActive))).OrderBy(a => a.Name)
                     .Select(a => new UserFilterOptionDTO { Id = a.Id, Name = a.Name }).ToListAsync(),
                 Languages = await _context.Languages.AsNoTracking()
                     .Where(l => l.IsDeleted != true && l.IsActive).OrderBy(l => l.Name)
@@ -159,7 +159,7 @@ namespace Baitul_Kitab.BAL.Services
         public async Task<List<UserFilterOptionDTO>> GetAuthorsAsync()
         {
             return await _context.Authors.AsNoTracking()
-                .Where(a => a.IsDeleted != true && a.IsActive)
+                .Where(a => a.IsDeleted != true && (a.IsActive || _context.Books.Any(b => b.AuthorId == a.Id && b.IsDeleted != true && b.IsActive)))
                 .OrderBy(a => a.Name)
                 .Select(a => new UserFilterOptionDTO
                 {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,7 @@ namespace Baitul_Kitab.Models
         public Guid? ModifiedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
 
-        public bool? IsDeleted { get; set; }
-        public bool IsActive { get; set; }
+        public bool? IsDeleted { get; set; } = false;
+        public bool IsActive { get; set; } = true;
     }
 }
