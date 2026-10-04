@@ -156,7 +156,13 @@ namespace Baitul_Kitab.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return RedirectToAction("Index", "Home", new { area = "" });
+
+                        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl != "/" && !returnUrl.Equals("/Home", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return LocalRedirect(returnUrl);
+                        }
+
+                        return RedirectToAction("Index", "Store", new { area = "User" });
                     }
                 }
                 foreach (var error in result.Errors)

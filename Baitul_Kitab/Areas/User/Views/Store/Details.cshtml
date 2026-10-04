@@ -38,11 +38,10 @@
                                 <partial name="_BookPriceStock" model="Model" />
 
                                 <div class="mt-3 mb-3 d-flex flex-wrap align-items-center">
-                                    @* Cart is not part of this release; the control is intentionally disabled. *@
-                                    <button type="button" id="addToCartButton" class="btn btn-primary mr-2 mb-2" disabled
-                                            title="Cart is not available yet">
+                                    <a asp-area="User" asp-controller="Store" asp-action="Cart" id="addToCartButton" class="btn btn-primary mr-2 mb-2"
+                                       title="Add to Shopping Cart">
                                         <i class="fas fa-shopping-cart mr-1"></i>Add to Cart
-                                    </button>
+                                    </a>
 
                                     @if (!string.IsNullOrWhiteSpace(Model.PdfFilePath))
                                     {

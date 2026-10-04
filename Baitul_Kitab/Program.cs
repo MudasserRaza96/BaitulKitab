@@ -28,6 +28,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.ReturnUrlParameter = "ReturnUrl";
 });
 
 // Add services to the container.
@@ -39,13 +41,8 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AllowAnonymousToAreaFolder("Identity", "/Account");
 });
 
-// Everything is protected by default; only explicitly [AllowAnonymous] endpoints are public
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-});
+// Standard authorization: endpoints with [Authorize] require authentication/roles
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<ICategories, CategoriesServices>();
 builder.Services.AddScoped<ILanguages, LanguagesServices>();

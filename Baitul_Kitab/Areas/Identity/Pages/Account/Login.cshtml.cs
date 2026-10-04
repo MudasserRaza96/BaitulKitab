@@ -119,12 +119,31 @@ namespace Baitul_Kitab.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User logged in.");
 
-                    // Role-based redirect: Home/Index sends each role to its authorized page.
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl != "/")
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    var isAdmin = user != null && await _userManager.IsInRoleAsync(user, "Admin");
+
+                    // If a valid local returnUrl is provided (and not root '/')
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl != "/" && !returnUrl.Equals("/Home", StringComparison.OrdinalIgnoreCase) && !returnUrl.Equals("/Home/Index", StringComparison.OrdinalIgnoreCase))
                     {
+                        // If a non-admin user is trying to access an Admin route, redirect to User Store
+                        if (!isAdmin && (returnUrl.Contains("/Book", StringComparison.OrdinalIgnoreCase) || 
+                                         returnUrl.Contains("/Category", StringComparison.OrdinalIgnoreCase) || 
+                                         returnUrl.Contains("/Author", StringComparison.OrdinalIgnoreCase) || 
+                                         returnUrl.Contains("/Admin", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            return RedirectToAction("Index", "Store", new { area = "User" });
+                        }
+
                         return LocalRedirect(returnUrl);
                     }
-                    return RedirectToAction("Index", "Home", new { area = "" });
+
+                    // Default role-based redirect
+                    if (isAdmin)
+                    {
+                        return RedirectToAction("Index", "Book", new { area = "Book" });
+                    }
+
+                    return RedirectToAction("Index", "Store", new { area = "User" });
                 }
                 if (result.RequiresTwoFactor)
                 {

@@ -14,20 +14,19 @@ namespace Baitul_Kitab.Controllers
             _logger = logger;
         }
 
-        [Authorize]
+        [AllowAnonymous]
         public IActionResult Index()
         {
-            if (User.IsInRole("Admin"))
+            if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+            {
                 return RedirectToAction("Index", "Book", new { area = "Book" });
+            }
 
-            if (User.IsInRole("User"))
-                return RedirectToAction("Index", "Store", new { area = "User" });
-
-            // Authenticated but holds no application role
-            return Forbid();
+            // Public visitors and normal users go to the User bookstore home
+            return RedirectToAction("Index", "Store", new { area = "User" });
         }
 
-        [Authorize]
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();

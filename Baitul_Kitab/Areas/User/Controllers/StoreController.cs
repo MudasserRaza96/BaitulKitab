@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Baitul_Kitab.Areas.User.Controllers
 {
     [Area("User")]
-    [Authorize(Roles = "User")]
+    [AllowAnonymous]
     public class StoreController : Controller
     {
         private const int HomeBookCount = 8;
@@ -45,6 +45,27 @@ namespace Baitul_Kitab.Areas.User.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Categories()
+        {
+            var categories = await _userBooks.GetCategoriesAsync();
+            return View(categories);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Authors()
+        {
+            var authors = await _userBooks.GetAuthorsAsync();
+            return View(authors);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Languages()
+        {
+            var languages = await _userBooks.GetLanguagesAsync();
+            return View(languages);
+        }
+
+        [HttpGet]
         public IActionResult About()
         {
             return View();
@@ -69,5 +90,30 @@ namespace Baitul_Kitab.Areas.User.Controllers
             ViewBag.SuccessMessage = "Thank you for reaching out! Your message has been received and we will get back to you shortly.";
             return View();
         }
+
+        #region Protected Authenticated User Routes
+
+        [Authorize(Roles = "User,Admin")]
+        [HttpGet]
+        public IActionResult Cart()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "User,Admin")]
+        [HttpGet]
+        public IActionResult Checkout()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "User,Admin")]
+        [HttpGet]
+        public IActionResult Orders()
+        {
+            return View();
+        }
+
+        #endregion
     }
 }

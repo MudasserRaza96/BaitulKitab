@@ -49,6 +49,11 @@
 
     bool isUserHomeActive = currentArea.Equals("User", StringComparison.OrdinalIgnoreCase) && currentController.Equals("Store", StringComparison.OrdinalIgnoreCase) && currentAction.Equals("Index", StringComparison.OrdinalIgnoreCase);
     bool isUserBooksActive = currentArea.Equals("User", StringComparison.OrdinalIgnoreCase) && currentController.Equals("Store", StringComparison.OrdinalIgnoreCase) && (currentAction.Equals("Books", StringComparison.OrdinalIgnoreCase) || currentAction.Equals("Details", StringComparison.OrdinalIgnoreCase));
+    bool isUserCategoriesActive = currentArea.Equals("User", StringComparison.OrdinalIgnoreCase) && currentController.Equals("Store", StringComparison.OrdinalIgnoreCase) && currentAction.Equals("Categories", StringComparison.OrdinalIgnoreCase);
+    bool isUserAuthorsActive = currentArea.Equals("User", StringComparison.OrdinalIgnoreCase) && currentController.Equals("Store", StringComparison.OrdinalIgnoreCase) && currentAction.Equals("Authors", StringComparison.OrdinalIgnoreCase);
+    bool isUserLanguagesActive = currentArea.Equals("User", StringComparison.OrdinalIgnoreCase) && currentController.Equals("Store", StringComparison.OrdinalIgnoreCase) && currentAction.Equals("Languages", StringComparison.OrdinalIgnoreCase);
+    bool isUserCartActive = currentArea.Equals("User", StringComparison.OrdinalIgnoreCase) && currentController.Equals("Store", StringComparison.OrdinalIgnoreCase) && currentAction.Equals("Cart", StringComparison.OrdinalIgnoreCase);
+    bool isUserOrdersActive = currentArea.Equals("User", StringComparison.OrdinalIgnoreCase) && currentController.Equals("Store", StringComparison.OrdinalIgnoreCase) && currentAction.Equals("Orders", StringComparison.OrdinalIgnoreCase);
     bool isUserAboutActive = currentArea.Equals("User", StringComparison.OrdinalIgnoreCase) && currentController.Equals("Store", StringComparison.OrdinalIgnoreCase) && currentAction.Equals("About", StringComparison.OrdinalIgnoreCase);
     bool isUserContactActive = currentArea.Equals("User", StringComparison.OrdinalIgnoreCase) && currentController.Equals("Store", StringComparison.OrdinalIgnoreCase) && currentAction.Equals("Contact", StringComparison.OrdinalIgnoreCase);
 }
@@ -75,7 +80,7 @@
                     </li>
                 </ul>
 
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ml-auto align-items-center">
                     <li class="nav-item">
                         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                             <i class="fas fa-expand-arrows-alt"></i>
@@ -121,6 +126,37 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="@Url.Action("Categories", "Store", new { area = "User" })" class="nav-link @(isUserCategoriesActive ? "active font-weight-bold text-primary" : "")">
+                                    <i class="fas fa-th-large mr-1"></i> Categories
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Authors", "Store", new { area = "User" })" class="nav-link @(isUserAuthorsActive ? "active font-weight-bold text-primary" : "")">
+                                    <i class="fas fa-feather-alt mr-1"></i> Authors
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Languages", "Store", new { area = "User" })" class="nav-link @(isUserLanguagesActive ? "active font-weight-bold text-primary" : "")">
+                                    <i class="fas fa-globe mr-1"></i> Languages
+                                </a>
+                            </li>
+
+                            @* Protected customer navigation items: visible only when authenticated as normal user *@
+                            @if (User.Identity?.IsAuthenticated == true && !isAdmin)
+                            {
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Cart", "Store", new { area = "User" })" class="nav-link @(isUserCartActive ? "active font-weight-bold text-primary" : "")">
+                                        <i class="fas fa-shopping-cart mr-1"></i> My Cart
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Orders", "Store", new { area = "User" })" class="nav-link @(isUserOrdersActive ? "active font-weight-bold text-primary" : "")">
+                                        <i class="fas fa-box mr-1"></i> My Orders
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="nav-item">
                                 <a href="@Url.Action("About", "Store", new { area = "User" })" class="nav-link @(isUserAboutActive ? "active font-weight-bold text-primary" : "")">
                                     <i class="fas fa-info-circle mr-1"></i> About Us
                                 </a>
@@ -138,12 +174,6 @@
                         <li class="nav-item">
                             <a class="nav-link" data-widget="fullscreen" href="#" role="button" title="Full Screen">
                                 <i class="fas fa-expand-arrows-alt"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                @(User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Guest")
-                                <i class="fas fa-user-circle ml-1" style="font-size: 20px; color: #6c757d;"></i>
                             </a>
                         </li>
                         <partial name="_LoginPartial" />

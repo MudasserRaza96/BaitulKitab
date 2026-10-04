@@ -38,6 +38,7 @@ namespace Baitul_Kitab.Models.DTO.UserStore
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
+        public int BookCount { get; set; }
     }
 
     /// <summary>Search, filter and paging input of the Books page.</summary>

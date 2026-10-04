@@ -141,5 +141,47 @@ namespace Baitul_Kitab.BAL.Services
                 })
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<List<UserFilterOptionDTO>> GetCategoriesAsync()
+        {
+            return await _context.Categories.AsNoTracking()
+                .Where(c => c.IsDeleted != true && c.IsActive)
+                .OrderBy(c => c.Name)
+                .Select(c => new UserFilterOptionDTO
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    BookCount = _context.Books.Count(b => b.CategoryId == c.Id && b.IsDeleted != true && b.IsActive)
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<UserFilterOptionDTO>> GetAuthorsAsync()
+        {
+            return await _context.Authors.AsNoTracking()
+                .Where(a => a.IsDeleted != true && a.IsActive)
+                .OrderBy(a => a.Name)
+                .Select(a => new UserFilterOptionDTO
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    BookCount = _context.Books.Count(b => b.AuthorId == a.Id && b.IsDeleted != true && b.IsActive)
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<UserFilterOptionDTO>> GetLanguagesAsync()
+        {
+            return await _context.Languages.AsNoTracking()
+                .Where(l => l.IsDeleted != true && l.IsActive)
+                .OrderBy(l => l.Name)
+                .Select(l => new UserFilterOptionDTO
+                {
+                    Id = l.Id,
+                    Name = l.Name,
+                    BookCount = _context.Books.Count(b => b.LanguageId == l.Id && b.IsDeleted != true && b.IsActive)
+                })
+                .ToListAsync();
+        }
     }
 }
