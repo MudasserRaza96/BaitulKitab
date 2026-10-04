@@ -44,11 +44,13 @@ builder.Services.AddRazorPages(options =>
 // Standard authorization: endpoints with [Authorize] require authentication/roles
 builder.Services.AddAuthorization();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICategories, CategoriesServices>();
 builder.Services.AddScoped<ILanguages, LanguagesServices>();
 builder.Services.AddScoped<IAuthors, AuthorsServices>();
 builder.Services.AddScoped<IBooks, BooksServices>();
 builder.Services.AddScoped<IUserBooks, UserBooksServices>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 // Advertisement placement structure (configured via the "Ads" section of appsettings.json)
 builder.Services.Configure<Baitul_Kitab.Ads.AdSettings>(builder.Configuration.GetSection(Baitul_Kitab.Ads.AdSettings.SectionName));

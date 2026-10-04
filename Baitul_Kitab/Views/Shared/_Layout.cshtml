@@ -33,8 +33,10 @@
         HideLoader();
     });
 </script>
+@inject Baitul_Kitab.BAL.Interfaces.ICartService CartService
 @{
     bool isAdmin = User.IsInRole("Admin");
+    int navCartCount = !isAdmin ? CartService.GetItemCount() : 0;
     var currentArea = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
@@ -141,14 +143,20 @@
                                 </a>
                             </li>
 
-                            @* Protected customer navigation items: visible only when authenticated as normal user *@
-                            @if (User.Identity?.IsAuthenticated == true && !isAdmin)
+                            @* Customer cart: visible to all visitors and non-admin customers *@
+                            @if (!isAdmin)
                             {
                                 <li class="nav-item">
-                                    <a href="@Url.Action("Cart", "Store", new { area = "User" })" class="nav-link @(isUserCartActive ? "active" : "")">
+                                    <a href="@Url.Action("Cart", "Store", new { area = "User" })" class="nav-link @(isUserCartActive ? "active" : "")" id="navMyCartLink" title="Shopping Cart">
                                         <i class="fas fa-shopping-cart"></i><span>My Cart</span>
+                                        <span class="badge badge-primary badge-pill ml-1 cart-count-badge" id="navCartCountBadge" style="@(navCartCount > 0 ? "" : "display:none;")">@navCartCount</span>
                                     </a>
                                 </li>
+                            }
+
+                            @* Customer orders: visible only when authenticated as normal user *@
+                            @if (User.Identity?.IsAuthenticated == true && !isAdmin)
+                            {
                                 <li class="nav-item">
                                     <a href="@Url.Action("Orders", "Store", new { area = "User" })" class="nav-link @(isUserOrdersActive ? "active" : "")">
                                         <i class="fas fa-box"></i><span>My Orders</span>
@@ -316,8 +324,68 @@
     @RenderSection("CustomScript", required: false)
     @RenderSection("Scripts", required: false)
 
+    <form id="__AjaxAntiForgeryForm" style="display:none;">@Html.AntiForgeryToken()</form>
+
     <script>
+        window.updateNavCartBadge = function (count) {
+            var $badges = $('.cart-count-badge');
+            if (count > 0) {
+                $badges.text(count).show();
+            } else {
+                $badges.text('0').hide();
+            }
+        };
+
         $(function () {
+            // Global quick-add-to-cart handler for book cards
+            $(document).on('click', '.btn-quick-add-cart', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var $btn = $(this);
+                var bookId = $btn.data('book-id');
+                var bookTitle = $btn.data('book-title') || 'Book';
+                var originalHtml = $btn.html();
+
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+
+                var token = $('#__AjaxAntiForgeryForm input[name="__RequestVerificationToken"]').val() ||
+                            $('input[name="__RequestVerificationToken"]').first().val();
+
+                $.ajax({
+                    url: '@Url.Action("AddToCart", "Store", new { area = "User" })',
+                    type: 'POST',
+                    data: {
+                        bookId: bookId,
+                        quantity: 1,
+                        __RequestVerificationToken: token
+                    },
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (res) {
+                        $btn.prop('disabled', false).html('<i class="fas fa-check text-white"></i>');
+                        setTimeout(function () {
+                            $btn.html(originalHtml);
+                        }, 1800);
+
+                        if (res.success) {
+                            if (window.toastr) {
+                                toastr.success(res.message, 'Shopping Cart');
+                            }
+                            window.updateNavCartBadge(res.count);
+                        } else {
+                            if (window.toastr) {
+                                toastr.warning(res.message, 'Shopping Cart');
+                            } else {
+                                alert(res.message);
+                            }
+                        }
+                    },
+                    error: function () {
+                        $btn.prop('disabled', false).html(originalHtml);
+                        window.location.href = '@Url.Action("Details", "Store", new { area = "User" })/' + bookId;
+                    }
+                });
+            });
+
             var currentPath = window.location.pathname.toLowerCase();
             $('.nav-sidebar a.nav-link').each(function () {
                 var href = $(this).attr('href');

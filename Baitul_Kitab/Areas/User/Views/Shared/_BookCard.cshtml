@@ -69,10 +69,21 @@
                     }
                 </div>
             </div>
-            <a asp-area="User" asp-controller="Store" asp-action="Details" asp-route-id="@Model.Id"
-               class="btn btn-sm btn-outline-primary btn-block book-btn-details">
-                <i class="fas fa-info-circle mr-1"></i>View Details
-            </a>
+            <div class="d-flex align-items-center mt-2">
+                <a asp-area="User" asp-controller="Store" asp-action="Details" asp-route-id="@Model.Id"
+                   class="btn btn-sm btn-outline-primary flex-grow-1 mr-1 book-btn-details" title="View Details">
+                    <i class="fas fa-info-circle mr-1"></i>View Details
+                </a>
+                @if (Model.InStock)
+                {
+                    <button type="button" class="btn btn-sm btn-primary btn-quick-add-cart"
+                            data-book-id="@Model.Id"
+                            data-book-title="@Model.Title"
+                            title="Add to Cart">
+                        <i class="fas fa-cart-plus"></i>
+                    </button>
+                }
+            </div>
         </div>
     </div>
 </div>

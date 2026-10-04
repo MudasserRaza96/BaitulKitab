@@ -11,10 +11,12 @@ namespace Baitul_Kitab.Areas.User.Controllers
     {
         private const int HomeBookCount = 8;
         private readonly IUserBooks _userBooks;
+        private readonly ICartService _cartService;
 
-        public StoreController(IUserBooks userBooks)
+        public StoreController(IUserBooks userBooks, ICartService cartService)
         {
             _userBooks = userBooks;
+            _cartService = cartService;
         }
 
         [HttpGet]
@@ -91,19 +93,130 @@ namespace Baitul_Kitab.Areas.User.Controllers
             return View();
         }
 
-        #region Protected Authenticated User Routes
+        #region Shopping Cart Endpoints (Public & Authenticated)
 
-        [Authorize(Roles = "User,Admin")]
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Cart()
         {
-            return View();
+            var cart = _cartService.GetCart();
+            return View(cart);
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddToCart(Guid bookId, int quantity = 1, string? returnUrl = null)
+        {
+            var result = await _cartService.AddItemAsync(bookId, quantity);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new
+                {
+                    success = result.Success,
+                    message = result.Message,
+                    count = result.Cart.TotalItems,
+                    cartSubtotal = result.Cart.Subtotal.ToString("N2"),
+                    bookTitle = result.Item?.Title
+                });
+            }
+
+            if (result.Success)
+            {
+                TempData["SuccessMessage"] = result.Message;
+            }
+            else
+            {
+                TempData["ErrorMessage"] = result.Message;
+            }
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            return RedirectToAction(nameof(Cart));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateCartQuantity(Guid bookId, int quantity)
+        {
+            var cart = _cartService.UpdateQuantity(bookId, quantity);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                var item = cart.Items.FirstOrDefault(i => i.BookId == bookId);
+                return Json(new
+                {
+                    success = true,
+                    count = cart.TotalItems,
+                    itemTotal = item != null ? item.Total.ToString("N2") : "0.00",
+                    subtotal = cart.Subtotal.ToString("N2"),
+                    grandTotal = cart.GrandTotal.ToString("N2"),
+                    isEmpty = cart.IsEmpty
+                });
+            }
+
+            return RedirectToAction(nameof(Cart));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveFromCart(Guid bookId)
+        {
+            var cart = _cartService.RemoveItem(bookId);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new
+                {
+                    success = true,
+                    count = cart.TotalItems,
+                    subtotal = cart.Subtotal.ToString("N2"),
+                    grandTotal = cart.GrandTotal.ToString("N2"),
+                    isEmpty = cart.IsEmpty
+                });
+            }
+
+            TempData["SuccessMessage"] = "Book removed from your shopping cart.";
+            return RedirectToAction(nameof(Cart));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ClearCart()
+        {
+            _cartService.ClearCart();
+            TempData["SuccessMessage"] = "Your shopping cart has been cleared.";
+            return RedirectToAction(nameof(Cart));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult GetCartCount()
+        {
+            return Json(new { count = _cartService.GetItemCount() });
+        }
+
+        #endregion
+
+        #region Protected Customer Routes
 
         [Authorize(Roles = "User,Admin")]
         [HttpGet]
         public IActionResult Checkout()
         {
+            var cart = _cartService.GetCart();
+            if (cart.IsEmpty)
+            {
+                TempData["ErrorMessage"] = "Your cart is empty. Please add books to cart before proceeding to checkout.";
+                return RedirectToAction(nameof(Cart));
+            }
             return View();
         }
 

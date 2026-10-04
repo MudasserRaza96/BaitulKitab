@@ -37,11 +37,41 @@
 
                                 <partial name="_BookPriceStock" model="Model" />
 
-                                <div class="mt-3 mb-3 d-flex flex-wrap align-items-center">
-                                    <a asp-area="User" asp-controller="Store" asp-action="Cart" id="addToCartButton" class="btn btn-primary mr-2 mb-2"
-                                       title="Add to Shopping Cart">
-                                        <i class="fas fa-shopping-cart mr-1"></i>Add to Cart
-                                    </a>
+                                <div class="mt-3 mb-3">
+                                    @if (Model.InStock)
+                                    {
+                                        <form asp-area="User" asp-controller="Store" asp-action="AddToCart" method="post" id="addToCartForm" class="d-inline-flex flex-wrap align-items-center">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="bookId" value="@Model.Id" />
+                                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+
+                                            <div class="input-group mr-3 mb-2" style="width: 130px;">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button" id="qtyMinusBtn">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="number" name="quantity" id="bookQuantityInput" class="form-control form-control-sm text-center font-weight-bold"
+                                                       value="1" min="1" max="@(Model.Quantity.GetValueOrDefault(10))" />
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button" id="qtyPlusBtn">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <button type="submit" id="addToCartButton" class="btn btn-primary mr-2 mb-2 px-3 shadow-sm font-weight-bold"
+                                                    title="Add to Shopping Cart">
+                                                <i class="fas fa-cart-plus mr-1"></i>Add to Cart
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" disabled class="btn btn-secondary mr-2 mb-2 px-3">
+                                            <i class="fas fa-ban mr-1"></i>Out of Stock
+                                        </button>
+                                    }
 
                                     @if (!string.IsNullOrWhiteSpace(Model.PdfFilePath))
                                     {
@@ -106,3 +136,71 @@
         @await Component.InvokeAsync("AdPlacement", new { placement = AdPlacements.Footer })
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var $input = $('#bookQuantityInput');
+            var max = parseInt($input.attr('max'), 10) || 999;
+            var min = 1;
+
+            $('#qtyMinusBtn').on('click', function () {
+                var val = parseInt($input.val(), 10) || 1;
+                if (val > min) {
+                    $input.val(val - 1);
+                }
+            });
+
+            $('#qtyPlusBtn').on('click', function () {
+                var val = parseInt($input.val(), 10) || 1;
+                if (val < max) {
+                    $input.val(val + 1);
+                }
+            });
+
+            $('#addToCartForm').on('submit', function (e) {
+                e.preventDefault();
+                var $form = $(this);
+                var $btn = $('#addToCartButton');
+                var originalHtml = $btn.html();
+
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i>Adding...');
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'POST',
+                    data: $form.serialize(),
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (res) {
+                        $btn.prop('disabled', false).html('<i class="fas fa-check mr-1"></i>Added!');
+                        setTimeout(function () {
+                            $btn.html(originalHtml);
+                        }, 2000);
+
+                        if (res.success) {
+                            if (window.toastr) {
+                                toastr.success(res.message, 'Shopping Cart');
+                            }
+                            if (typeof window.updateNavCartBadge === 'function') {
+                                window.updateNavCartBadge(res.count);
+                            } else {
+                                $('.cart-count-badge').text(res.count).toggle(res.count > 0);
+                            }
+                        } else {
+                            if (window.toastr) {
+                                toastr.warning(res.message, 'Shopping Cart');
+                            } else {
+                                alert(res.message);
+                            }
+                        }
+                    },
+                    error: function () {
+                        $btn.prop('disabled', false).html(originalHtml);
+                        // Fallback to normal form submit
+                        $form.off('submit').submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
