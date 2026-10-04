@@ -3,7 +3,6 @@
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-blue.svg)](https://dotnet.microsoft.com/)
 [![EF Core](https://img.shields.io/badge/Entity%20Framework%20Core-8.0-purple.svg)](https://docs.microsoft.com/ef/core/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-4.6-purple.svg)](https://getbootstrap.com/)
-[![AdminLTE](https://img.shields.io/badge/AdminLTE-3.2-orange.svg)](https://adminlte.io/)
 
 **Baitul Kitab** is a full-featured, enterprise-grade Online Book Store built with **ASP.NET Core 8 MVC**, following **N-Tier Clean Architecture** with separation of concerns between presentation, business logic, data access, and models.
 
